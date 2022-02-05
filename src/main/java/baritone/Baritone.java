@@ -20,6 +20,7 @@ package baritone;
 import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
 import baritone.api.Settings;
+import baritone.api.behavior.ITaskBehavior;
 import baritone.api.event.listener.IEventBus;
 import baritone.api.utils.Helper;
 import baritone.api.utils.IPlayerContext;
@@ -29,6 +30,7 @@ import baritone.command.manager.CommandManager;
 import baritone.event.GameEventHandler;
 import baritone.process.*;
 import baritone.selection.SelectionManager;
+import baritone.task.TaskBehavior;
 import baritone.utils.BlockStateInterface;
 import baritone.utils.GuiClick;
 import baritone.utils.InputOverrideHandler;
@@ -79,6 +81,7 @@ public class Baritone implements IBaritone {
     private ExploreProcess exploreProcess;
     private BackfillProcess backfillProcess;
     private FarmProcess farmProcess;
+    private TaskBehavior taskProcess;
 
     private PathingControlManager pathingControlManager;
     private SelectionManager selectionManager;
@@ -118,6 +121,7 @@ public class Baritone implements IBaritone {
         this.worldProvider = new WorldProvider();
         this.selectionManager = new SelectionManager(this);
         this.commandManager = new CommandManager(this);
+        this.taskProcess = new TaskBehavior(this);
     }
 
     @Override
@@ -226,5 +230,10 @@ public class Baritone implements IBaritone {
 
     public static Executor getExecutor() {
         return threadPool;
+    }
+
+    @Override
+    public ITaskBehavior getTaskBehavior() {
+        return taskProcess;
     }
 }
