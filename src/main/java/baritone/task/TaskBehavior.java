@@ -23,9 +23,9 @@ import baritone.api.event.events.TickEvent;
 import baritone.api.behavior.ITaskBehavior;
 import baritone.behavior.Behavior;
 import baritone.task.types.TaskCheats;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import baritone.task.types.TaskMine;
+import baritone.task.utils.TaskAny;
+import net.minecraft.world.item.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,7 +40,28 @@ public class TaskBehavior extends Behavior implements ITaskBehavior {
 
     @Override
     public void setCommand(int count, String... parameters) {
-        currentTask = getTask(new ItemStack(Items.DIAMOND_PICKAXE, 1));
+        Task[] tasks = new Task[parameters.length];
+        for(int i = 0; i < tasks.length; i++) {
+            tasks[i] = getTask(new ItemStack(toItem(parameters[i]),count));
+            if(tasks[i] == null) {
+                Task[] nTasks = new Task[tasks.length - 1];
+                for(int j = 0; j < i; j++) {
+                    nTasks[j] = tasks[j];
+                }
+                tasks = nTasks;
+            }
+        }
+        currentTask = new TaskAny(this,tasks).simplifyTask();
+    }
+
+    private Item toItem(String string) {
+        String str = string.replace("minecraft:","");
+        for(Item item : TaskUtils.ITEMS) {
+            if(item.toString().replace("minecraft:","").equals(str)) {
+                return item;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -55,6 +76,7 @@ public class TaskBehavior extends Behavior implements ITaskBehavior {
             currentTask.onTick();
             if(currentTask.isComplete()) {
                 currentTask = null;
+                baritone.getMineProcess().cancel();
             }
         }
 
@@ -68,8 +90,23 @@ public class TaskBehavior extends Behavior implements ITaskBehavior {
     }
 
     public Task getTask(ItemStack itemstack) {
+        if(itemstack == null) {
+            return null;
+        }
+
+        Set<Task> tasks = new HashSet<>();
+
+        if(TaskUtils.ORE_MAP.containsKey(itemstack.getItem())) {
+            tasks.add(new TaskMine(this,itemstack,TaskUtils.ORE_MAP.get(itemstack.getItem())));
+        } else if(itemstack.getItem() instanceof BlockItem blockItem) {
+            tasks.add(new TaskMine(this,itemstack,blockItem.getBlock()));
+        }
 
 
-        return new TaskCheats(this, itemstack);
+        if(tasks.size() == 0) {
+            return new TaskCheats(this,itemstack);
+        } else {
+            return new TaskAny(this,tasks.toArray(new Task[0]));
+        }
     }
 }

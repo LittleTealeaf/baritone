@@ -38,4 +38,8 @@ public abstract class Task {
     public void addUsedItems(Set<Item> items) {
 
     }
+
+    public int getSteps() {
+        return 1;
+    }
 }

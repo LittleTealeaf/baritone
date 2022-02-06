@@ -17,6 +17,8 @@
 
 package baritone.task.types;
 
+import baritone.api.process.IMineProcess;
+import baritone.process.MineProcess;
 import baritone.task.Task;
 import baritone.task.TaskBehavior;
 import baritone.task.TaskUtils;
@@ -33,11 +35,15 @@ import java.util.Set;
 
 public class TaskMine extends TaskItem {
 
-    private Task prerequisiteTask;
+    protected final Task prerequisiteTask;
+    protected final IMineProcess mineProcess;
+    protected final Block[] blocks;
+    private int resetTicks;
 
     public TaskMine(TaskBehavior behavior, ItemStack itemStack, Block... blocks) {
         super(behavior, itemStack);
-
+        this.blocks = blocks;
+        mineProcess = behavior.baritone.getMineProcess();
         Set<Item> tools = new HashSet<>();
         int count = 0;
         for(Item item : TaskUtils.ITEMS) {
@@ -53,6 +59,31 @@ public class TaskMine extends TaskItem {
         for(Item item : tools) {
             toolTasks[count-=1] = behavior.getTask(new ItemStack(item,1));
         }
+
         prerequisiteTask = new TaskAny(behavior,toolTasks);
+    }
+
+    @Override
+    public void onTick() {
+        if(!prerequisiteTask.isComplete()) {
+            prerequisiteTask.onTick();
+            mineProcess.cancel();
+        } else {
+            if(!mineProcess.isActive() || resetTicks < 0) {
+                mineProcess.mine(blocks);
+                resetTicks = 600;
+            } else {
+                resetTicks--;
+            }
+        }
+    }
+
+    @Override
+    public int getSteps() {
+        if(!prerequisiteTask.isComplete()) {
+            return prerequisiteTask.getSteps() + 1;
+        } else {
+            return 1;
+        }
     }
 }

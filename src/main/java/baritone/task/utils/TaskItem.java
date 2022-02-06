@@ -35,4 +35,6 @@ public abstract class TaskItem extends Task {
     public boolean isComplete() {
         return behavior.ctx.player().getInventory().contains(itemStack);
     }
+
+
 }

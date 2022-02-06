@@ -43,6 +43,20 @@ public class TaskAny extends Task {
     }
 
     @Override
+    public void onTick() {
+        int steps = tasks[0].getSteps();
+        Task task = tasks[0];
+        for(int i = 1; i < tasks.length; i++) {
+            int s = tasks[i].getSteps();
+            if(steps > s) {
+                task = tasks[i];
+                steps = s;
+            }
+        }
+        task.onTick();
+    }
+
+    @Override
     public boolean isComplete() {
         for(Task task : tasks) {
             if(task.isComplete()) {
@@ -56,6 +70,23 @@ public class TaskAny extends Task {
     public void addUsedItems(Set<Item> items) {
         for(Task task : tasks) {
             task.addUsedItems(items);
+        }
+    }
+
+    @Override
+    public int getSteps() {
+        int steps = tasks[0].getSteps();
+        for(int i = 1; i < tasks.length; i++) {
+            steps = Math.min(steps,tasks[i].getSteps());
+        }
+        return steps;
+    }
+
+    public Task simplifyTask() {
+        if(tasks.length == 1) {
+            return tasks[0];
+        } else {
+            return this;
         }
     }
 }

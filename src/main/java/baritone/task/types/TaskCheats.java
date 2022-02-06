@@ -23,7 +23,23 @@ import net.minecraft.world.item.ItemStack;
 
 public class TaskCheats extends TaskItem {
 
+    private int delay = 0;
+
     public TaskCheats(TaskBehavior behavior, ItemStack itemStack) {
         super(behavior, itemStack);
+    }
+
+    @Override
+    public void onTick() {
+        if(delay > 0) {
+            delay--;
+        } else {
+            execute();
+        }
+    }
+
+    private void execute() {
+        behavior.ctx.player().chat("/give @s " + itemStack.getItem().toString() + " " + itemStack.getCount());
+        delay = 100;
     }
 }
