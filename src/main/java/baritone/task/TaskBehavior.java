@@ -20,8 +20,10 @@ package baritone.task;
 import baritone.Baritone;
 import baritone.api.event.events.TickEvent;
 import baritone.api.behavior.ITaskBehavior;
-import baritone.api.process.PathingCommand;
 import baritone.behavior.Behavior;
+import baritone.task.types.TaskCheats;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class TaskBehavior extends Behavior implements ITaskBehavior {
 
@@ -33,7 +35,7 @@ public class TaskBehavior extends Behavior implements ITaskBehavior {
 
     @Override
     public void setCommand(int count, String... parameters) {
-
+        currentTask = createTask(new ItemStack(Items.DIAMOND_PICKAXE,1));
     }
 
     public void setCurrentTask(Task task) {
@@ -43,5 +45,19 @@ public class TaskBehavior extends Behavior implements ITaskBehavior {
     @Override
     public void onTick(TickEvent event) {
         super.onTick(event);
+
+        if(currentTask != null) {
+            if (currentTask.isComplete()) {
+                currentTask = null;
+            } else {
+                currentTask.onTick();
+            }
+        }
+    }
+
+    private Task createTask(ItemStack itemstack) {
+
+
+        return new TaskCheats(this, itemstack);
     }
 }

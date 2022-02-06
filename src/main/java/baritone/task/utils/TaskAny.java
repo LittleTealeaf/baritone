@@ -15,6 +15,28 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package baritone.task;
+package baritone.task.utils;
 
-public class TaskFactory {}
+import baritone.Baritone;
+import baritone.task.Task;
+import baritone.task.TaskBehavior;
+
+public class TaskAny extends Task {
+
+    private Task[] tasks;
+
+    public TaskAny(TaskBehavior behavior, Task... tasks) {
+        super(behavior);
+        this.tasks = tasks;
+    }
+
+    @Override
+    public boolean isComplete() {
+        for(Task task : tasks) {
+            if(task.isComplete()) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

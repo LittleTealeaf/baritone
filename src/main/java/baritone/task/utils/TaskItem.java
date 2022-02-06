@@ -15,20 +15,24 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package baritone.task;
+package baritone.task.utils;
 
+import baritone.Baritone;
+import baritone.task.Task;
+import baritone.task.TaskBehavior;
+import net.minecraft.world.item.ItemStack;
 
-public abstract class Task {
+public abstract class TaskItem extends Task {
 
-    protected TaskBehavior behavior;
+    protected ItemStack itemStack;
 
-    public Task(TaskBehavior behavior) {
-        this.behavior = behavior;
+    public TaskItem(TaskBehavior behavior, ItemStack itemStack) {
+        super(behavior);
+        this.itemStack = itemStack;
     }
 
-    public abstract boolean isComplete();
-
-    public void onTick() {
-
+    @Override
+    public boolean isComplete() {
+        return behavior.ctx.player().getInventory().contains(itemStack);
     }
 }
