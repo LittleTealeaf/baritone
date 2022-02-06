@@ -20,10 +20,22 @@ package baritone.task.utils;
 import baritone.Baritone;
 import baritone.task.Task;
 import baritone.task.TaskBehavior;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+
+import java.util.Set;
 
 public class TaskAny extends Task {
 
     private Task[] tasks;
+
+    public TaskAny(TaskBehavior behavior, ItemStack... itemStacks) {
+        super(behavior);
+        tasks = new Task[itemStacks.length];
+        for(int i = 0; i < tasks.length; i++) {
+            tasks[i] = behavior.getTask(itemStacks[i]);
+        }
+    }
 
     public TaskAny(TaskBehavior behavior, Task... tasks) {
         super(behavior);
@@ -38,5 +50,12 @@ public class TaskAny extends Task {
             }
         }
         return false;
+    }
+
+    @Override
+    public void addUsedItems(Set<Item> items) {
+        for(Task task : tasks) {
+            task.addUsedItems(items);
+        }
     }
 }

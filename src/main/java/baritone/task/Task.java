@@ -17,6 +17,9 @@
 
 package baritone.task;
 
+import net.minecraft.world.item.Item;
+
+import java.util.Set;
 
 public abstract class Task {
 
@@ -29,6 +32,10 @@ public abstract class Task {
     public abstract boolean isComplete();
 
     public void onTick() {
+
+    }
+
+    public void addUsedItems(Set<Item> items) {
 
     }
 }

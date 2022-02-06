@@ -18,12 +18,17 @@
 package baritone.task;
 
 import baritone.Baritone;
+import baritone.api.BaritoneAPI;
 import baritone.api.event.events.TickEvent;
 import baritone.api.behavior.ITaskBehavior;
 import baritone.behavior.Behavior;
 import baritone.task.types.TaskCheats;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class TaskBehavior extends Behavior implements ITaskBehavior {
 
@@ -35,27 +40,34 @@ public class TaskBehavior extends Behavior implements ITaskBehavior {
 
     @Override
     public void setCommand(int count, String... parameters) {
-        currentTask = createTask(new ItemStack(Items.DIAMOND_PICKAXE,1));
-    }
-
-    public void setCurrentTask(Task task) {
-
+        currentTask = getTask(new ItemStack(Items.DIAMOND_PICKAXE, 1));
     }
 
     @Override
     public void onTick(TickEvent event) {
         super.onTick(event);
 
+        Set<Item> usedItems = null;
+
         if(currentTask != null) {
-            if (currentTask.isComplete()) {
+            usedItems = new HashSet<>();
+            currentTask.addUsedItems(usedItems);
+            currentTask.onTick();
+            if(currentTask.isComplete()) {
                 currentTask = null;
-            } else {
-                currentTask.onTick();
             }
         }
+
+        Set<Item> useBlocks = new HashSet<>(Set.of(TaskUtils.BLOCK_ITEMS));
+        if(usedItems != null) {
+            for(Item item : usedItems) {
+                useBlocks.remove(item);
+            }
+        }
+        BaritoneAPI.getSettings().acceptableThrowawayItems.value = useBlocks.stream().toList();
     }
 
-    private Task createTask(ItemStack itemstack) {
+    public Task getTask(ItemStack itemstack) {
 
 
         return new TaskCheats(this, itemstack);
