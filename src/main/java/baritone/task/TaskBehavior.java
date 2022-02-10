@@ -30,6 +30,8 @@ import net.minecraft.world.item.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static baritone.task.TaskMap.TASK_MAP;
+
 public class TaskBehavior extends Behavior implements ITaskBehavior {
 
     private Task currentTask;
@@ -96,6 +98,10 @@ public class TaskBehavior extends Behavior implements ITaskBehavior {
 
         Set<Task> tasks = new HashSet<>();
 
+        if(TASK_MAP.containsKey(itemstack.getItem())) {
+            return TASK_MAP.get(itemstack.getItem()).createTask(itemstack.getCount());
+        }
+
         if(TaskUtils.ORE_MAP.containsKey(itemstack.getItem())) {
             tasks.add(new TaskMine(this,itemstack,TaskUtils.ORE_MAP.get(itemstack.getItem())));
         } else if(itemstack.getItem() instanceof BlockItem blockItem) {
@@ -108,5 +114,9 @@ public class TaskBehavior extends Behavior implements ITaskBehavior {
         } else {
             return new TaskAny(this,tasks.toArray(new Task[0]));
         }
+    }
+
+    interface TaskFactory {
+        Task createTask(int stack_size);
     }
 }

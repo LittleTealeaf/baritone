@@ -18,6 +18,7 @@
 package baritone.task.types;
 
 import baritone.api.process.IMineProcess;
+import baritone.behavior.Behavior;
 import baritone.process.MineProcess;
 import baritone.task.Task;
 import baritone.task.TaskBehavior;
@@ -34,8 +35,6 @@ import java.util.List;
 import java.util.Set;
 
 public class TaskMine extends TaskItem {
-
-    protected final Task prerequisiteTask;
     protected final IMineProcess mineProcess;
     protected final Block[] blocks;
     private int resetTicks;
@@ -44,6 +43,14 @@ public class TaskMine extends TaskItem {
         super(behavior, itemStack);
         this.blocks = blocks;
         mineProcess = behavior.baritone.getMineProcess();
+    }
+
+//    private static Task createPrerequisiteTask(TaskBehavior behavior, Block... blocks) {
+
+//    }
+
+    @Override
+    protected Set<Task> createPrerequisites() {
         Set<Item> tools = new HashSet<>();
         int count = 0;
         for(Item item : TaskUtils.ITEMS) {
@@ -60,30 +67,16 @@ public class TaskMine extends TaskItem {
             toolTasks[count-=1] = behavior.getTask(new ItemStack(item,1));
         }
 
-        prerequisiteTask = new TaskAny(behavior,toolTasks);
+        return Set.of(new TaskAny(behavior,toolTasks));
     }
 
     @Override
-    public void onTick() {
-        if(!prerequisiteTask.isComplete()) {
-            prerequisiteTask.onTick();
-            mineProcess.cancel();
+    public void onTaskTick() {
+        if(!mineProcess.isActive() || resetTicks < 0) {
+            mineProcess.mine(blocks);
+            resetTicks = 600;
         } else {
-            if(!mineProcess.isActive() || resetTicks < 0) {
-                mineProcess.mine(blocks);
-                resetTicks = 600;
-            } else {
-                resetTicks--;
-            }
-        }
-    }
-
-    @Override
-    public int getSteps() {
-        if(!prerequisiteTask.isComplete()) {
-            return prerequisiteTask.getSteps() + 1;
-        } else {
-            return 1;
+            resetTicks--;
         }
     }
 }

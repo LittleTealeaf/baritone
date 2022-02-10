@@ -24,22 +24,64 @@ import java.util.Set;
 public abstract class Task {
 
     protected TaskBehavior behavior;
+    protected Set<Task> prerequisites;
 
     public Task(TaskBehavior behavior) {
         this.behavior = behavior;
     }
 
+    protected final Set<Task> getPrerequisites() {
+        return prerequisites == null ? prerequisites = createPrerequisites() : prerequisites;
+    }
+
+    protected Set<Task> createPrerequisites() {
+        return Set.of();
+    }
+
     public abstract boolean isComplete();
 
     public void onTick() {
+        if(tickPrerequisites()) {
+            onTaskTick();
+        }
+    }
 
+    public void onTaskTick() {
+
+    }
+
+    public boolean tickPrerequisites() {
+        int count = 0;
+        Task runTask = null;
+        for(Task task : getPrerequisites()) {
+            if(!task.isComplete() && (runTask == null || task.getSteps() < count)) {
+                runTask = task;
+                count = task.getSteps();
+            }
+        }
+        if(runTask == null) {
+            return true;
+        } else {
+            runTask.onTick();
+            return false;
+        }
     }
 
     public void addUsedItems(Set<Item> items) {
-
+        for(Task task : getPrerequisites()) {
+            task.addUsedItems(items);
+        }
     }
 
     public int getSteps() {
-        return 1;
+        if(isComplete()) {
+            return 0;
+        } else {
+            int count = 1;
+            for(Task task : getPrerequisites()) {
+                count += task.getSteps();
+            }
+            return count;
+        }
     }
 }

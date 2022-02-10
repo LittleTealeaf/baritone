@@ -15,33 +15,19 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package baritone.task.utils;
+package baritone.task;
 
-import baritone.Baritone;
-import baritone.task.Task;
-import baritone.task.TaskBehavior;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
-public abstract class TaskItem extends Task {
+public class TaskMap {
+    public static final Map<Item, TaskBehavior.TaskFactory> TASK_MAP;
 
-    protected ItemStack itemStack;
+    static {
+        TASK_MAP = new HashMap<>() {{
 
-    public TaskItem(TaskBehavior behavior, ItemStack itemStack) {
-        super(behavior);
-        this.itemStack = itemStack;
-    }
-
-    @Override
-    public boolean isComplete() {
-        return behavior.ctx.player().getInventory().contains(itemStack);
-    }
-
-    @Override
-    public void addUsedItems(Set<Item> items) {
-        super.addUsedItems(items);
-        items.add(itemStack.getItem());
+        }};
     }
 }
