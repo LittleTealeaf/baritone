@@ -17,7 +17,6 @@
 
 package baritone.task;
 
-import baritone.task.utils.TaskAny;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -94,5 +93,24 @@ public class TaskUtils {
         public Block[] put(Item item, Block... blocks) {
             return super.put(item,blocks);
         }
+    }
+
+    public static Iterable<Item> filterItemByString(String filter) {
+        Set<Item> items = new HashSet<>();
+        for(Item item : ITEMS) {
+            if(item.toString().contains(filter)) {
+                items.add(item);
+            }
+        }
+        return items;
+    }
+
+    public static Item lookupItem(String name) {
+        for(Item item : ITEMS) {
+            if(item.toString().equals(name)) {
+                return item;
+            }
+        }
+        return null;
     }
 }

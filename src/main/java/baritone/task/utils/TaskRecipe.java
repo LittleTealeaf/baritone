@@ -15,48 +15,36 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package baritone.task.types;
+package baritone.task.utils;
 
 import baritone.task.Task;
 import baritone.task.TaskBehavior;
-import baritone.task.utils.TaskItem;
+import baritone.task.recipes.ITaskRecipe;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class TaskSmallCraft extends TaskItem {
+public class TaskRecipe extends TaskItem  {
 
-    private final Item[][] recipe;
-    private final int craftConversion;
+    protected ITaskRecipe recipe;
 
-    public TaskSmallCraft(TaskBehavior behavior, ItemStack itemStack, int craftConversion, Item[][] recipe) {
+    public TaskRecipe(TaskBehavior behavior, ItemStack itemStack, ITaskRecipe recipe) {
         super(behavior, itemStack);
         this.recipe = recipe;
-        this.craftConversion = craftConversion;
     }
 
     @Override
     protected Set<Task> createPrerequisites() {
         Set<Task> tasks = new HashSet<>();
-        for(Item[] row : recipe) {
-            for(Item item : row) {
-                if(item != null) {
-                    tasks.add(behavior.getTask(new ItemStack(item,roundUp(itemStack.getCount(),craftConversion))));
-                }
-            }
+        for(Item item : recipe.getItems()) {
+            tasks.add(behavior.getTask(new ItemStack(item, roundUp(itemStack.getCount(), recipe.getExpectedResult()))));
         }
         return tasks;
     }
 
-    @Override
-    public void onTick() {
-        super.onTick();
-    }
-
-
     private static int roundUp(int a, int b) {
-        return (int) Math.ceil((double)a / b);
+        return a%b == 0 ? a/b : a/b+1;
     }
 }

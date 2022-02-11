@@ -25,6 +25,7 @@ import baritone.behavior.Behavior;
 import baritone.task.types.TaskCheats;
 import baritone.task.types.TaskMine;
 import baritone.task.utils.TaskAny;
+import net.fabricmc.loader.impl.util.log.Log;
 import net.minecraft.world.item.*;
 
 import java.util.HashSet;
@@ -38,6 +39,7 @@ public class TaskBehavior extends Behavior implements ITaskBehavior {
 
     public TaskBehavior(Baritone baritone) {
         super(baritone);
+        TASK_MAP.containsKey(Items.ACACIA_BOAT);
     }
 
     @Override
@@ -99,7 +101,7 @@ public class TaskBehavior extends Behavior implements ITaskBehavior {
         Set<Task> tasks = new HashSet<>();
 
         if(TASK_MAP.containsKey(itemstack.getItem())) {
-            return TASK_MAP.get(itemstack.getItem()).createTask(itemstack.getCount());
+            return TASK_MAP.get(itemstack.getItem()).createTask(this,itemstack.getCount());
         }
 
         if(TaskUtils.ORE_MAP.containsKey(itemstack.getItem())) {
@@ -116,7 +118,5 @@ public class TaskBehavior extends Behavior implements ITaskBehavior {
         }
     }
 
-    interface TaskFactory {
-        Task createTask(int stack_size);
-    }
+
 }

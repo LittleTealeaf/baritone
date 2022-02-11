@@ -45,10 +45,6 @@ public class TaskMine extends TaskItem {
         mineProcess = behavior.baritone.getMineProcess();
     }
 
-//    private static Task createPrerequisiteTask(TaskBehavior behavior, Block... blocks) {
-
-//    }
-
     @Override
     protected Set<Task> createPrerequisites() {
         Set<Item> tools = new HashSet<>();
