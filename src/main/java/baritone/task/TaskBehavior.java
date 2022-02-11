@@ -40,6 +40,7 @@ public class TaskBehavior extends Behavior implements ITaskBehavior {
     public TaskBehavior(Baritone baritone) {
         super(baritone);
         TASK_MAP.containsKey(Items.ACACIA_BOAT);
+
     }
 
     @Override

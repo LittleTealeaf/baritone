@@ -19,7 +19,9 @@ package baritone.task.utils;
 
 import baritone.task.Task;
 import baritone.task.TaskBehavior;
+import baritone.task.recipes.CraftingRecipe;
 import baritone.task.recipes.ITaskRecipe;
+import baritone.task.types.TaskSimpleCraft;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -46,5 +48,13 @@ public class TaskRecipe extends TaskItem  {
 
     private static int roundUp(int a, int b) {
         return a%b == 0 ? a/b : a/b+1;
+    }
+
+    public static TaskRecipe getCraftRecipe(TaskBehavior behavior, ItemStack itemStack, CraftingRecipe recipe) {
+        if(recipe.getCraftingType() == CraftingRecipe.INVENTORY) {
+            return new TaskSimpleCraft(behavior,itemStack,recipe);
+        } else {
+            return null;
+        }
     }
 }
