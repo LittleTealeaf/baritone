@@ -27,10 +27,11 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 public class TaskUtils {
+
     public static final Item[] ITEMS;
     public static final BlockItem[] BLOCK_ITEMS;
     public static final Block[] BLOCKS;
-    public static final Map<Item,Block[]> ORE_MAP;
+    public static final Map<Item, Block[]> ORE_MAP;
 
     static {
         ITEMS = collectItems();
@@ -39,14 +40,14 @@ public class TaskUtils {
         ORE_MAP = collectOreMap();
     }
 
-    private static Map<Item,Block[]> collectOreMap() {
+    private static Map<Item, Block[]> collectOreMap() {
         return new OreMap() {{
-            put(Items.DIAMOND,Blocks.DIAMOND_ORE,Blocks.DEEPSLATE_DIAMOND_ORE);
-            put(Items.EMERALD,Blocks.EMERALD_ORE,Blocks.DEEPSLATE_EMERALD_ORE);
-            put(Items.RAW_COPPER,Blocks.COPPER_ORE,Blocks.DEEPSLATE_COPPER_ORE);
-            put(Items.RAW_IRON,Blocks.DEEPSLATE_IRON_ORE,Blocks.IRON_ORE);
-            put(Items.RAW_GOLD,Blocks.DEEPSLATE_GOLD_ORE,Blocks.GOLD_ORE);
-            put(Items.COAL,Blocks.COAL_ORE,Blocks.DEEPSLATE_COAL_ORE);
+            put(Items.DIAMOND, Blocks.DIAMOND_ORE, Blocks.DEEPSLATE_DIAMOND_ORE);
+            put(Items.EMERALD, Blocks.EMERALD_ORE, Blocks.DEEPSLATE_EMERALD_ORE);
+            put(Items.RAW_COPPER, Blocks.COPPER_ORE, Blocks.DEEPSLATE_COPPER_ORE);
+            put(Items.RAW_IRON, Blocks.DEEPSLATE_IRON_ORE, Blocks.IRON_ORE);
+            put(Items.RAW_GOLD, Blocks.DEEPSLATE_GOLD_ORE, Blocks.GOLD_ORE);
+            put(Items.COAL, Blocks.COAL_ORE, Blocks.DEEPSLATE_COAL_ORE);
         }};
     }
 
@@ -54,7 +55,7 @@ public class TaskUtils {
 
         Field[] fields = Items.class.getFields();
         Item[] items = new Item[fields.length];
-        for(int i = 0; i < fields.length; i++) {
+        for (int i = 0; i < fields.length; i++) {
             try {
                 items[i] = (Item) fields[i].get(null);
             } catch (IllegalAccessException e) {
@@ -67,7 +68,7 @@ public class TaskUtils {
     private static Block[] collectBlocks() {
         Field[] fields = Blocks.class.getFields();
         Block[] blocks = new Block[fields.length];
-        for(int i = 0; i < fields.length; i++) {
+        for (int i = 0; i < fields.length; i++) {
             try {
                 blocks[i] = (Block) fields[i].get(null);
             } catch (IllegalAccessException e) {
@@ -79,26 +80,18 @@ public class TaskUtils {
 
     private static BlockItem[] collectBlockItems() {
         List<BlockItem> blockItems = new ArrayList<>();
-        for(Item item : ITEMS) {
-            if(item instanceof BlockItem blockItem) {
+        for (Item item : ITEMS) {
+            if (item instanceof BlockItem blockItem) {
                 blockItems.add(blockItem);
             }
         }
         return blockItems.toArray(new BlockItem[0]);
     }
 
-    static class OreMap extends HashMap<Item,Block[]> {
-
-        @Override
-        public Block[] put(Item item, Block... blocks) {
-            return super.put(item,blocks);
-        }
-    }
-
     public static Iterable<Item> filterItemByString(String filter) {
         Set<Item> items = new HashSet<>();
-        for(Item item : ITEMS) {
-            if(item.toString().contains(filter)) {
+        for (Item item : ITEMS) {
+            if (item.toString().contains(filter)) {
                 items.add(item);
             }
         }
@@ -106,11 +99,19 @@ public class TaskUtils {
     }
 
     public static Item lookupItem(String name) {
-        for(Item item : ITEMS) {
-            if(item.toString().equals(name)) {
+        for (Item item : ITEMS) {
+            if (item.toString().equals(name)) {
                 return item;
             }
         }
         return null;
+    }
+
+    static class OreMap extends HashMap<Item, Block[]> {
+
+        @Override
+        public Block[] put(Item item, Block... blocks) {
+            return super.put(item, blocks);
+        }
     }
 }

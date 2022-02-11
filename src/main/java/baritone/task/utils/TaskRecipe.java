@@ -28,7 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TaskRecipe extends TaskItem  {
+public class TaskRecipe extends TaskItem {
 
     protected ITaskRecipe recipe;
 
@@ -37,24 +37,24 @@ public class TaskRecipe extends TaskItem  {
         this.recipe = recipe;
     }
 
+    public static TaskRecipe getCraftRecipe(TaskBehavior behavior, ItemStack itemStack, CraftingRecipe recipe) {
+        if (recipe.getCraftingType() == CraftingRecipe.INVENTORY) {
+            return new TaskSimpleCraft(behavior, itemStack, recipe);
+        } else {
+            return null;
+        }
+    }
+
     @Override
     protected Set<Task> createPrerequisites() {
         Set<Task> tasks = new HashSet<>();
-        for(Item item : recipe.getItems()) {
+        for (Item item : recipe.getItems()) {
             tasks.add(behavior.getTask(new ItemStack(item, roundUp(itemStack.getCount(), recipe.getExpectedResult()))));
         }
         return tasks;
     }
 
     private static int roundUp(int a, int b) {
-        return a%b == 0 ? a/b : a/b+1;
-    }
-
-    public static TaskRecipe getCraftRecipe(TaskBehavior behavior, ItemStack itemStack, CraftingRecipe recipe) {
-        if(recipe.getCraftingType() == CraftingRecipe.INVENTORY) {
-            return new TaskSimpleCraft(behavior,itemStack,recipe);
-        } else {
-            return null;
-        }
+        return a % b == 0 ? a / b : a / b + 1;
     }
 }

@@ -21,25 +21,20 @@ import baritone.api.utils.IPlayerContext;
 import baritone.task.TaskBehavior;
 import baritone.task.recipes.CraftingRecipe;
 import baritone.task.utils.TaskRecipe;
-import com.mojang.authlib.minecraft.client.MinecraftClient;
-import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 
 public class TaskSimpleCraft extends TaskRecipe {
 
-    private IPlayerContext ctx;
-    private CraftingRecipe craftRecipe;
+    private final IPlayerContext ctx;
+    private final CraftingRecipe craftRecipe;
 
     public TaskSimpleCraft(TaskBehavior behavior, ItemStack itemStack, CraftingRecipe recipe) {
         super(behavior, itemStack, recipe);
         this.ctx = behavior.ctx;
         this.craftRecipe = recipe;
-        for(Recipe r : ctx.world().getRecipeManager().getRecipes()) {
+        for (Recipe r : ctx.world().getRecipeManager().getRecipes()) {
             System.out.println(r.toString() + " " + r.getGroup());
-
         }
     }
 
@@ -49,5 +44,4 @@ public class TaskSimpleCraft extends TaskRecipe {
 //        ctx.player().inventoryMenu.fillCraftSlotsStackedContents();
 
     }
-
 }

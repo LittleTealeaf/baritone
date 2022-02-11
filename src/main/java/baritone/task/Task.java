@@ -41,7 +41,7 @@ public abstract class Task {
     public abstract boolean isComplete();
 
     public void onTick() {
-        if(tickPrerequisites()) {
+        if (tickPrerequisites()) {
             onTaskTick();
         }
     }
@@ -53,13 +53,13 @@ public abstract class Task {
     public boolean tickPrerequisites() {
         int count = 0;
         Task runTask = null;
-        for(Task task : getPrerequisites()) {
-            if(!task.isComplete() && (runTask == null || task.getSteps() < count)) {
+        for (Task task : getPrerequisites()) {
+            if (!task.isComplete() && (runTask == null || task.getSteps() < count)) {
                 runTask = task;
                 count = task.getSteps();
             }
         }
-        if(runTask == null) {
+        if (runTask == null) {
             return true;
         } else {
             runTask.onTick();
@@ -68,17 +68,17 @@ public abstract class Task {
     }
 
     public void addUsedItems(Set<Item> items) {
-        for(Task task : getPrerequisites()) {
+        for (Task task : getPrerequisites()) {
             task.addUsedItems(items);
         }
     }
 
     public int getSteps() {
-        if(isComplete()) {
+        if (isComplete()) {
             return 0;
         } else {
             int count = 1;
-            for(Task task : getPrerequisites()) {
+            for (Task task : getPrerequisites()) {
                 count += task.getSteps();
             }
             return count;

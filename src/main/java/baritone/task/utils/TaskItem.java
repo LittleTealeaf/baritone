@@ -17,7 +17,6 @@
 
 package baritone.task.utils;
 
-import baritone.Baritone;
 import baritone.task.Task;
 import baritone.task.TaskBehavior;
 import net.minecraft.world.item.Item;

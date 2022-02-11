@@ -31,7 +31,7 @@ public class TaskCheats extends TaskItem {
 
     @Override
     public void onTick() {
-        if(delay > 0) {
+        if (delay > 0) {
             delay--;
         } else {
             execute();

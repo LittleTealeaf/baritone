@@ -19,14 +19,16 @@ package baritone.task;
 
 import baritone.Baritone;
 import baritone.api.BaritoneAPI;
-import baritone.api.event.events.TickEvent;
 import baritone.api.behavior.ITaskBehavior;
+import baritone.api.event.events.TickEvent;
 import baritone.behavior.Behavior;
 import baritone.task.types.TaskCheats;
 import baritone.task.types.TaskMine;
 import baritone.task.utils.TaskAny;
-import net.fabricmc.loader.impl.util.log.Log;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,29 +42,52 @@ public class TaskBehavior extends Behavior implements ITaskBehavior {
     public TaskBehavior(Baritone baritone) {
         super(baritone);
         TASK_MAP.containsKey(Items.ACACIA_BOAT);
-
     }
 
     @Override
     public void setCommand(int count, String... parameters) {
         Task[] tasks = new Task[parameters.length];
-        for(int i = 0; i < tasks.length; i++) {
-            tasks[i] = getTask(new ItemStack(toItem(parameters[i]),count));
-            if(tasks[i] == null) {
+        for (int i = 0; i < tasks.length; i++) {
+            tasks[i] = getTask(new ItemStack(toItem(parameters[i]), count));
+            if (tasks[i] == null) {
                 Task[] nTasks = new Task[tasks.length - 1];
-                for(int j = 0; j < i; j++) {
+                for (int j = 0; j < i; j++) {
                     nTasks[j] = tasks[j];
                 }
                 tasks = nTasks;
             }
         }
-        currentTask = new TaskAny(this,tasks).simplifyTask();
+        currentTask = new TaskAny(this, tasks).simplifyTask();
+    }
+
+    public Task getTask(ItemStack itemstack) {
+        if (itemstack == null) {
+            return null;
+        }
+
+        Set<Task> tasks = new HashSet<>();
+
+        if (TASK_MAP.containsKey(itemstack.getItem())) {
+            return TASK_MAP.get(itemstack.getItem()).createTask(this, itemstack.getCount());
+        }
+
+        if (TaskUtils.ORE_MAP.containsKey(itemstack.getItem())) {
+            tasks.add(new TaskMine(this, itemstack, TaskUtils.ORE_MAP.get(itemstack.getItem())));
+        } else if (itemstack.getItem() instanceof BlockItem blockItem) {
+            tasks.add(new TaskMine(this, itemstack, blockItem.getBlock()));
+        }
+
+        if (tasks.size() == 0) {
+            return new TaskCheats(this, itemstack);
+        } else {
+            return new TaskAny(this, tasks.toArray(new Task[0]));
+        }
     }
 
     private Item toItem(String string) {
-        String str = string.replace("minecraft:","");
-        for(Item item : TaskUtils.ITEMS) {
-            if(item.toString().replace("minecraft:","").equals(str)) {
+        String str = string.replace("minecraft:", "");
+        for (Item item : TaskUtils.ITEMS) {
+            if (item.toString().replace("minecraft:", "").equals(str)) {
                 return item;
             }
         }
@@ -75,49 +100,22 @@ public class TaskBehavior extends Behavior implements ITaskBehavior {
 
         Set<Item> usedItems = null;
 
-        if(currentTask != null) {
+        if (currentTask != null) {
             usedItems = new HashSet<>();
             currentTask.addUsedItems(usedItems);
             currentTask.onTick();
-            if(currentTask.isComplete()) {
+            if (currentTask.isComplete()) {
                 currentTask = null;
                 baritone.getMineProcess().cancel();
             }
         }
 
         Set<Item> useBlocks = new HashSet<>(Set.of(TaskUtils.BLOCK_ITEMS));
-        if(usedItems != null) {
-            for(Item item : usedItems) {
+        if (usedItems != null) {
+            for (Item item : usedItems) {
                 useBlocks.remove(item);
             }
         }
         BaritoneAPI.getSettings().acceptableThrowawayItems.value = useBlocks.stream().toList();
     }
-
-    public Task getTask(ItemStack itemstack) {
-        if(itemstack == null) {
-            return null;
-        }
-
-        Set<Task> tasks = new HashSet<>();
-
-        if(TASK_MAP.containsKey(itemstack.getItem())) {
-            return TASK_MAP.get(itemstack.getItem()).createTask(this,itemstack.getCount());
-        }
-
-        if(TaskUtils.ORE_MAP.containsKey(itemstack.getItem())) {
-            tasks.add(new TaskMine(this,itemstack,TaskUtils.ORE_MAP.get(itemstack.getItem())));
-        } else if(itemstack.getItem() instanceof BlockItem blockItem) {
-            tasks.add(new TaskMine(this,itemstack,blockItem.getBlock()));
-        }
-
-
-        if(tasks.size() == 0) {
-            return new TaskCheats(this,itemstack);
-        } else {
-            return new TaskAny(this,tasks.toArray(new Task[0]));
-        }
-    }
-
-
 }

@@ -18,8 +18,6 @@
 package baritone.task.types;
 
 import baritone.api.process.IMineProcess;
-import baritone.behavior.Behavior;
-import baritone.process.MineProcess;
 import baritone.task.Task;
 import baritone.task.TaskBehavior;
 import baritone.task.TaskUtils;
@@ -30,11 +28,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 public class TaskMine extends TaskItem {
+
     protected final IMineProcess mineProcess;
     protected final Block[] blocks;
     private int resetTicks;
@@ -49,9 +46,9 @@ public class TaskMine extends TaskItem {
     protected Set<Task> createPrerequisites() {
         Set<Item> tools = new HashSet<>();
         int count = 0;
-        for(Item item : TaskUtils.ITEMS) {
-            for(Block block : blocks) {
-                if(item.isCorrectToolForDrops(block.defaultBlockState())) {
+        for (Item item : TaskUtils.ITEMS) {
+            for (Block block : blocks) {
+                if (item.isCorrectToolForDrops(block.defaultBlockState())) {
                     tools.add(item);
                     count++;
                     break;
@@ -59,16 +56,16 @@ public class TaskMine extends TaskItem {
             }
         }
         Task[] toolTasks = new Task[count];
-        for(Item item : tools) {
-            toolTasks[count-=1] = behavior.getTask(new ItemStack(item,1));
+        for (Item item : tools) {
+            toolTasks[count -= 1] = behavior.getTask(new ItemStack(item, 1));
         }
 
-        return Set.of(new TaskAny(behavior,toolTasks));
+        return Set.of(new TaskAny(behavior, toolTasks));
     }
 
     @Override
     public void onTaskTick() {
-        if(!mineProcess.isActive() || resetTicks < 0) {
+        if (!mineProcess.isActive() || resetTicks < 0) {
             mineProcess.mine(blocks);
             resetTicks = 600;
         } else {

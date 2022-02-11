@@ -19,7 +19,6 @@ package baritone.task.recipes;
 
 import net.minecraft.world.item.Item;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,12 +31,12 @@ public class CraftingRecipe implements ITaskRecipe {
     private final int expected;
 
     public CraftingRecipe(int expected, Item slot1, Item slot2, Item slot3, Item slot4) {
-        recipe = new Item[] {slot1,slot2,slot3,slot4};
+        recipe = new Item[]{slot1, slot2, slot3, slot4};
         this.expected = expected;
     }
 
     public CraftingRecipe(int expected, Item slot1, Item slot2, Item slot3, Item slot4, Item slot5, Item slot6, Item slot7, Item slot8, Item slot9) {
-        recipe = new Item[] {slot1,slot2,slot3,slot4,slot5,slot6,slot7,slot8,slot9};
+        recipe = new Item[]{slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9};
         this.expected = expected;
     }
 
@@ -48,8 +47,8 @@ public class CraftingRecipe implements ITaskRecipe {
     @Override
     public Collection<Item> getItems() {
         Set<Item> items = new HashSet<>();
-        for(Item item : recipe) {
-            if(item != null) {
+        for (Item item : recipe) {
+            if (item != null) {
                 items.add(item);
             }
         }
@@ -64,5 +63,4 @@ public class CraftingRecipe implements ITaskRecipe {
     public Item[] getRecipe() {
         return recipe;
     }
-
 }

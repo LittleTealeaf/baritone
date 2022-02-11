@@ -22,6 +22,8 @@ import net.minecraft.world.item.Item;
 import java.util.Collection;
 
 public interface ITaskRecipe {
+
     Collection<Item> getItems();
+
     int getExpectedResult();
 }

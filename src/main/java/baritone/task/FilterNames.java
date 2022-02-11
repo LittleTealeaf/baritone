@@ -17,15 +17,14 @@
 
 package baritone.task;
 
-import net.minecraft.world.item.Item;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 public class FilterNames<T> {
 
-    private Collection<String> contains, doesNotContain;
+    private final Collection<String> contains;
+    private final Collection<String> doesNotContain;
 
     public FilterNames() {
         contains = new HashSet<>();
@@ -44,18 +43,8 @@ public class FilterNames<T> {
 
     public Collection<T> filter(Collection<T> items) {
         Set<T> set = new HashSet<>();
-        for(T item : items) {
-            if(filterItem(item)) {
-                set.add(item);
-            }
-        }
-        return set;
-    }
-
-    public Collection<T> filter(T... items) {
-        Set<T> set = new HashSet<>();
-        for(T item : items) {
-            if(filterItem(item)) {
+        for (T item : items) {
+            if (filterItem(item)) {
                 set.add(item);
             }
         }
@@ -63,16 +52,26 @@ public class FilterNames<T> {
     }
 
     private boolean filterItem(T item) {
-        for(String filter : contains) {
-            if(!item.toString().contains(filter)) {
+        for (String filter : contains) {
+            if (!item.toString().contains(filter)) {
                 return false;
             }
         }
-        for(String filter : doesNotContain) {
-            if(item.toString().contains(filter)) {
+        for (String filter : doesNotContain) {
+            if (item.toString().contains(filter)) {
                 return false;
             }
         }
         return true;
+    }
+
+    public Collection<T> filter(T... items) {
+        Set<T> set = new HashSet<>();
+        for (T item : items) {
+            if (filterItem(item)) {
+                set.add(item);
+            }
+        }
+        return set;
     }
 }
