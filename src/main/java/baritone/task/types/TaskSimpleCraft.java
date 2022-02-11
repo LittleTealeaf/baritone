@@ -17,15 +17,27 @@
 
 package baritone.task.types;
 
+import baritone.api.utils.IPlayerContext;
 import baritone.task.TaskBehavior;
-import baritone.task.recipes.ITaskRecipe;
-import baritone.task.recipes.SimpleCraftRecipe;
+import baritone.task.recipes.CraftingRecipe;
 import baritone.task.utils.TaskRecipe;
 import net.minecraft.world.item.ItemStack;
 
 public class TaskSimpleCraft extends TaskRecipe {
 
-    public TaskSimpleCraft(TaskBehavior behavior, ItemStack itemStack, SimpleCraftRecipe recipe) {
+    private IPlayerContext ctx;
+    private CraftingRecipe craftRecipe;
+
+    public TaskSimpleCraft(TaskBehavior behavior, ItemStack itemStack, CraftingRecipe recipe) {
         super(behavior, itemStack, recipe);
+        this.ctx = behavior.ctx;
+        this.craftRecipe = recipe;
+    }
+
+    @Override
+    public void onTaskTick() {
+        if(ctx.player().inventoryMenu.getCraftSlots().getItem(0).getItem() != craftRecipe.getRecipe()[0]) {
+            System.out.println("NOOOO");
+        }
     }
 }

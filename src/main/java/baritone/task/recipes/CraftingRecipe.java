@@ -19,29 +19,40 @@ package baritone.task.recipes;
 
 import net.minecraft.world.item.Item;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SimpleCraftRecipe implements ITaskRecipe {
+public class CraftingRecipe implements ITaskRecipe {
 
-    private Item[][] recipe;
-    private int expected;
-    private Set<Item> items;
+    public static final int INVENTORY = 4, CRAFTING_TABLE = 9;
 
-    public SimpleCraftRecipe(int expected, Item topLeft, Item topRight, Item bottomLeft, Item bottomRight) {
-        recipe = new Item[][] {{topLeft, topRight}, {bottomLeft, bottomRight}};
+    private final Item[] recipe;
+    private final int expected;
+
+    public CraftingRecipe(int expected, Item slot1, Item slot2, Item slot3, Item slot4) {
+        recipe = new Item[] {slot1,slot2,slot3,slot4};
         this.expected = expected;
-        items = new HashSet<>();
-        for(Item item : new Item[] {topLeft, topRight, bottomLeft, bottomRight}) {
-            if(item != null) {
-                items.add(item);
-            }
-        }
+    }
+
+    public CraftingRecipe(int expected, Item slot1, Item slot2, Item slot3, Item slot4, Item slot5, Item slot6, Item slot7, Item slot8, Item slot9) {
+        recipe = new Item[] {slot1,slot2,slot3,slot4,slot5,slot6,slot7,slot8,slot9};
+        this.expected = expected;
+    }
+
+    public int getCraftingType() {
+        return recipe.length;
     }
 
     @Override
     public Collection<Item> getItems() {
+        Set<Item> items = new HashSet<>();
+        for(Item item : recipe) {
+            if(item != null) {
+                items.add(item);
+            }
+        }
         return items;
     }
 
@@ -49,4 +60,9 @@ public class SimpleCraftRecipe implements ITaskRecipe {
     public int getExpectedResult() {
         return expected;
     }
+
+    public Item[] getRecipe() {
+        return recipe;
+    }
+
 }

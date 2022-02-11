@@ -17,12 +17,10 @@
 
 package baritone.task;
 
-import baritone.task.recipes.SimpleCraftRecipe;
+import baritone.task.recipes.CraftingRecipe;
 import baritone.task.types.TaskSimpleCraft;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import org.lwjgl.system.CallbackI;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +41,7 @@ public class TaskMap {
     }
 
     private static TaskFactory createSimpleRecipe(Item item, int conversion, Item topLeft, Item topRight, Item bottomLeft, Item bottomRight) {
-        SimpleCraftRecipe recipe = new SimpleCraftRecipe(conversion,topLeft, topRight,bottomLeft, bottomRight);
+        CraftingRecipe recipe = new CraftingRecipe(conversion, topLeft, topRight, bottomLeft, bottomRight);
         return (behavior, stack_size) -> new TaskSimpleCraft(behavior,new ItemStack(item,stack_size),recipe);
     }
 
